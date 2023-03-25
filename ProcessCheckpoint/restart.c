@@ -19,22 +19,16 @@ void do_work() {
 	n = read_data(fd, &old_registers, sizeof(ucontext_t));
 
 	while((n = read(fd, &proc_maps[i], sizeof(struct memory_segment)))  > 0) {
-//		printf("Start address is %p\n", proc_maps[i].start);
-//                printf("End address is %p\n", proc_maps[i].end);
         	void *addr = mmap(proc_maps[i].start, proc_maps[i].end - proc_maps[i].start, PROT_READ|PROT_WRITE|PROT_EXEC,
                     MAP_PRIVATE | MAP_FIXED | MAP_ANONYMOUS, -1, 0);
-//		printf("mapped at %p length %d\n", addr, proc_maps[i].end - proc_maps[i].start);
 		int k = read_data(fd, addr, proc_maps[i].end - proc_maps[i].start);
-//		printf("read bytes %d\n", k);
 
 		if (addr == MAP_FAILED) {
 			perror("mmap error");
 		}
 	        i++;
         }
-	//n = read(fd, &old_registers, sizeof(ucontext_t));
 	int setcontext_output = setcontext(&old_registers);
-//	printf("setcontext output %d\n", setcontext_output);
 }
 
 int read_data(int fd, void *addr, int length) {
@@ -56,5 +50,4 @@ void recursive(int r) {
 
 int main() {
 	recursive(10000);
-//	printf("exiting");
 }
