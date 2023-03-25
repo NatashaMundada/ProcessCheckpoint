@@ -65,31 +65,24 @@ int read_proc_maps_output(int fd, struct memory_segment *proc_maps, int fd_ckpt)
 	proc_maps->permission[1] = permission[1];
         proc_maps->permission[2] = permission[2];
 	proc_maps->permission[3] = permission[3];
-	//memcpy(proc_maps->permission, permission, 4);
-//	printf("Permission lib %s\n", proc_maps->permission);
 
 	if(strstr(filename,"[vsyscall]"))
 	{
-//		printf("Not storing [vsyscall] data in the ckeckpoint file\n");
+		//printf("Not storing [vsyscall] data in the ckeckpoint file\n");
 	}
 	else if(strstr(filename, "[vdso]")) {
-//		printf("Not storing [vdso] data in the checkpoint file\n");
+		//printf("Not storing [vdso] data in the checkpoint file\n");
 	}
 	//guard pages added by compiler are not stored in the checkpoint file 
 	else if(strstr(proc_maps->permission,"---p")) {
-//		printf("This segment is added as a guard page, so not storing it in the checkpoint file\n");
+		//printf("This segment is added as a guard page, so not storing it in the checkpoint file\n");
 	}
 	
 	else {
-//		printf("storing in the file\n");
 		//storing the segments in a checkpoint file
 		int write_rc = write(fd_ckpt, proc_maps, sizeof(struct memory_segment));		
-        	int k = write_data(fd_ckpt, proc_maps->start, proc_maps->end - proc_maps->start);
-//		printf("start addr %p \n", proc_maps->start);
-//		printf("end addr %p \n", proc_maps->end);
-		//printf("wrote bytes %d \n", k); 
+        int k = write_data(fd_ckpt, proc_maps->start, proc_maps->end - proc_maps->start);
 
-		//int write_rc = write(fd_ckpt, proc_maps->start, proc_maps->end - proc_maps->start);
 		if(write_rc == -1) {
 			perror("error writing");
 			exit(1);
@@ -112,7 +105,6 @@ int write_data(int fd, void *addr, int length) {
 //Signal handler for the SIGUSR2
 void signal_handler(int signal) {
 	struct memory_segment proc_maps[1000];	
-	//int fd_filename = open("mycheckpoint_temp", O_WRONLY|O_APPEND, S_IRUSR|S_IWUSR);
 	
 	assert(get_memory_segments(proc_maps) == 0);
 	printf("Memory segments are stored in mycheckpoint_temp file\n");
